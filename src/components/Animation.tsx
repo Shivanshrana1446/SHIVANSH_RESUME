@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
+import anime from "../assets/anime.png";
 gsap.registerPlugin(ScrollTrigger);
 
 type Stage = {
@@ -23,6 +23,30 @@ const Animation: React.FC<AnimationProps> = ({ setActiveStageIndex, journeyStage
   const journeyMapRef = useRef<HTMLElement>(null);
   const runnerRef = useRef<HTMLDivElement>(null);
   const stageNodesRef = useRef<HTMLButtonElement[]>([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // Responsive check
+  const checkMobile = useCallback(() => {
+    setIsMobile(window.innerWidth <= 768);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [checkMobile]);
+
+  // Compute mobile positions: vertical track, nodes alternate left/right
+  const getMobileX = (index: number): string => {
+    // Even indices go left of track, odd go right
+    return index % 2 === 0 ? '30%' : '70%';
+  };
+
+  const getMobileY = (index: number): string => {
+    // Distribute evenly from 10% to 90%
+    const total = journeyStages.length;
+    const step = 80 / (total - 1 || 1);
+    return `${10 + step * index}%`;
+  };
 
   useEffect(() => {
     const journeyMap = journeyMapRef.current;
@@ -30,6 +54,11 @@ const Animation: React.FC<AnimationProps> = ({ setActiveStageIndex, journeyStage
     const stageNodes = stageNodesRef.current;
 
     if (!journeyMap || !runner || stageNodes.length === 0) return;
+
+    // Kill any existing ScrollTrigger instances on this element
+    ScrollTrigger.getAll().forEach(st => {
+      if (st.vars.trigger === journeyMap) st.kill();
+    });
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -48,13 +77,15 @@ const Animation: React.FC<AnimationProps> = ({ setActiveStageIndex, journeyStage
       },
     });
 
-
     journeyStages.forEach((stage, index) => {
+      const targetX = isMobile ? getMobileX(index) : stage.x;
+      const targetY = isMobile ? getMobileY(index) : stage.y;
+
       tl.to(
         runner,
         {
-          '--x': stage.x,
-          '--y': stage.y,
+          '--x': targetX,
+          '--y': targetY,
           duration: 1,
           ease: 'power1.inOut',
         },
@@ -81,7 +112,13 @@ const Animation: React.FC<AnimationProps> = ({ setActiveStageIndex, journeyStage
         );
       }
     });
-  }, [setActiveStageIndex, journeyStages]);
+
+    return () => {
+      ScrollTrigger.getAll().forEach(st => {
+        if (st.vars.trigger === journeyMap) st.kill();
+      });
+    };
+  }, [setActiveStageIndex, journeyStages, isMobile]);
 
   return (
     <>
@@ -97,11 +134,11 @@ const Animation: React.FC<AnimationProps> = ({ setActiveStageIndex, journeyStage
           className="runner"
           ref={runnerRef}
           style={{
-            ['--x' as string]: journeyStages[0].x,
-            ['--y' as string]: journeyStages[0].y,
+            ['--x' as string]: isMobile ? getMobileX(0) : journeyStages[0].x,
+            ['--y' as string]: isMobile ? getMobileY(0) : journeyStages[0].y,
           }}
         >
-          <img src="/src/assets/anime.png" alt="Runner" />
+         <img src={anime} alt="Runner" />
           <span className="runner__shadow" />
         </div>
 
@@ -114,8 +151,8 @@ const Animation: React.FC<AnimationProps> = ({ setActiveStageIndex, journeyStage
             }}
             className="stage-node"
             style={{
-              ['--x' as string]: stage.x,
-              ['--y' as string]: stage.y,
+              ['--x' as string]: isMobile ? getMobileX(index) : stage.x,
+              ['--y' as string]: isMobile ? getMobileY(index) : stage.y,
               opacity: 0,
               transform: 'scale(0.5)',
             }}
