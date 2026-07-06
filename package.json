@@ -10,8 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "gsap": "^3.15.0",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.2.7",
+    "react-intersection-observer": "^10.0.3",
+    "scrollmagic": "^2.0.9",
+    "scrolltrigger": "^1.0.1"
   },
   "devDependencies": {
     "@types/node": "^24.13.2",
