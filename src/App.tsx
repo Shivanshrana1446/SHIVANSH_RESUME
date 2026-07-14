@@ -110,7 +110,7 @@ const projects: Project[] = [
     description:
       'A full-stack business website for a client, built from scratch. The project involved understanding client needs, designing the UI/UX, developing the frontend and backend, and handling the deployment process. The site is fully responsive and includes features like a contact form, a gallery, and a blog.',
     technologies: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Tailwind CSS'],
-    liveUrl: '#',
+    liveUrl: 'https://www.modernriwaaz.in/',
     sourceUrl: '#',
   },
   {
@@ -128,6 +128,15 @@ const projects: Project[] = [
       'A desktop application that uses face recognition to automate the process of taking attendance. The system can detect and recognize faces in real-time, mark attendance, and store the data in a CSV file. The user interface is built with Tkinter.',
     technologies: ['Python', 'OpenCV', 'Tkinter', 'dlib'],
     sourceUrl: 'https://github.com/Shivanshrana1446/Face-Recognition-Based-Attendance-System',
+  },
+  {
+    name: 'Talleflow Clone - Scroll Animation Website',
+    summary: 'A clone of Talleflow with smooth scroll-triggered animations built using React, Framer Motion, and Tailwind CSS.',
+    description:
+      'A visually rich website clone that showcases scroll-driven animations, parallax effects, and modern UI patterns. Built to demonstrate proficiency in animation libraries and engaging frontend experiences.',
+    technologies: ['React.js', 'Tailwind CSS', 'Framer Motion'],
+    liveUrl: 'https://talleflow-clone-animation-bm1k.vercel.app/',
+    sourceUrl: '#',
   },
 ];
 
@@ -279,6 +288,7 @@ function App() {
 
           <article className="story-card">
             <p className="eyebrow">Projects</p>
+            <p className="story-card__hint">Click on any project to view the live site</p>
             <div className="timeline">
               {projects.map((project) => (
                 <div key={project.name} onClick={() => openModal(project)} className="clickable">

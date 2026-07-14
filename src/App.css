@@ -438,13 +438,18 @@
 
 .story-card__detail {
   margin-top: 0.75rem;
-  padding: 1rem;
+}
+
+.story-card__hint {
+  margin: 0.5rem 0 0.75rem;
+  padding: 0.75rem 1rem;
   border-radius: 14px;
   background: rgba(88, 170, 255, 0.08);
   border: 1px solid rgba(88, 170, 255, 0.2);
   color: rgba(227, 238, 255, 0.8);
-  font-size: 0.9rem;
-  line-height: 1.6;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  font-style: italic;
 }
 
 .journey-goals {
