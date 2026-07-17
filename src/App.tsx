@@ -138,6 +138,15 @@ const projects: Project[] = [
     liveUrl: 'https://talleflow-clone-animation-bm1k.vercel.app/',
     sourceUrl: '#',
   },
+  {
+    name: 'Mini Docs - Collaborative Google Docs Clone',
+    summary: 'A real-time collaborative document editor built with React, Socket.io, and MongoDB, inspired by Google Docs.',
+    description:
+      'A full-featured collaborative document editor that supports real-time editing, rich text formatting, and multi-user collaboration. Built with React.js for the frontend, Socket.io and Node.js for real-time communication, and MongoDB for document storage. Deployed on Vercel.',
+    technologies: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Socket.io', 'Quill.js'],
+    liveUrl: 'https://mini-docs-bslg.vercel.app',
+    sourceUrl: 'https://github.com/Shivanshrana1446/mini_docs',
+  },
 ];
 
 const educationNotes = [
