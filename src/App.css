@@ -236,7 +236,10 @@
    ========================================================================== */
 
 .journey-map {
+  --mx: 0;
+  --my: 0;
   position: relative;
+  isolation: isolate;
   min-height: 420px;
   border-radius: 24px;
   overflow: hidden;
@@ -245,11 +248,78 @@
   padding: 2rem 1rem;
 }
 
+.journey-map__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
 .journey-map__sky {
   position: absolute;
   inset: 0;
+  z-index: 1;
   background: radial-gradient(circle at 50% 0%, rgba(88, 170, 255, 0.18), transparent 60%);
   pointer-events: none;
+}
+
+.journey-map__fog {
+  position: absolute;
+  z-index: 1;
+  width: 55%;
+  height: 70%;
+  border-radius: 50%;
+  filter: blur(50px);
+  pointer-events: none;
+  will-change: transform;
+}
+
+.journey-map__fog--a {
+  left: -10%;
+  top: -20%;
+  background: radial-gradient(circle, rgba(138, 240, 191, 0.14), transparent 70%);
+  transform: translate3d(calc(var(--mx) * 12px), calc(var(--my) * 8px), 0);
+  animation: fog-drift 16s ease-in-out infinite;
+}
+
+.journey-map__fog--b {
+  right: -10%;
+  bottom: -25%;
+  background: radial-gradient(circle, rgba(88, 170, 255, 0.16), transparent 70%);
+  transform: translate3d(calc(var(--mx) * -14px), calc(var(--my) * -10px), 0);
+  animation: fog-drift 20s ease-in-out infinite reverse;
+}
+
+@keyframes fog-drift {
+  0%, 100% { transform: translate3d(calc(var(--mx) * 12px), calc(var(--my) * 8px), 0) scale(1); }
+  50% { transform: translate3d(calc(var(--mx) * 12px + 24px), calc(var(--my) * 8px - 14px), 0) scale(1.08); }
+}
+
+.journey-map__rays {
+  position: absolute;
+  inset: -20%;
+  z-index: 1;
+  pointer-events: none;
+  background: conic-gradient(
+    from 200deg at 50% 0%,
+    transparent 0deg,
+    rgba(88, 170, 255, 0.06) 8deg,
+    transparent 20deg,
+    transparent 160deg,
+    rgba(138, 240, 191, 0.05) 172deg,
+    transparent 184deg,
+    transparent 360deg
+  );
+  opacity: 0.8;
+  transform: translate3d(calc(var(--mx) * -8px), 0, 0) rotate(0deg);
+  animation: rays-sweep 24s linear infinite;
+}
+
+@keyframes rays-sweep {
+  to { transform: translate3d(calc(var(--mx) * -8px), 0, 0) rotate(360deg); }
 }
 
 .journey-map__mist {
@@ -257,8 +327,8 @@
   top: 0;
   bottom: 0;
   width: 120px;
+  z-index: 2;
   pointer-events: none;
-  z-index: 1;
 }
 
 .journey-map__mist--left {
@@ -271,6 +341,15 @@
   background: linear-gradient(270deg, rgba(6, 10, 20, 0.95), transparent);
 }
 
+.journey-map__stage {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  will-change: transform;
+}
+
+/* ---- Energy beam track ---- */
+
 .journey-map__track {
   position: absolute;
   top: 50%;
@@ -278,10 +357,50 @@
   right: 5%;
   height: 4px;
   transform: translateY(-50%);
-  background: linear-gradient(90deg, rgba(138, 240, 191, 0.6), rgba(88, 170, 255, 0.6));
+  background: linear-gradient(90deg, rgba(138, 240, 191, 0.7), rgba(88, 170, 255, 0.7));
   border-radius: 999px;
-  box-shadow: 0 0 12px rgba(88, 170, 255, 0.4);
+  box-shadow:
+    0 0 8px rgba(88, 170, 255, 0.55),
+    0 0 22px rgba(88, 170, 255, 0.35),
+    0 0 40px rgba(138, 240, 191, 0.2);
   animation: track-pulse 3s ease-in-out infinite;
+  overflow: visible;
+}
+
+.journey-map__track-flow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.85) 6%,
+    transparent 14%,
+    transparent 100%
+  );
+  background-size: 220% 100%;
+  mix-blend-mode: screen;
+  opacity: 0.7;
+  animation: track-flow 3.2s linear infinite;
+}
+
+@keyframes track-flow {
+  0% { background-position: 0% 0; }
+  100% { background-position: -220% 0; }
+}
+
+.energy-pulse {
+  --p: 0;
+  position: absolute;
+  top: 50%;
+  left: calc(var(--p) * 1%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, #eafff5 0%, #8af0bf 40%, rgba(88, 170, 255, 0.6) 70%, transparent 100%);
+  box-shadow: 0 0 10px 3px rgba(138, 240, 191, 0.8), 0 0 22px 6px rgba(88, 170, 255, 0.5);
+  pointer-events: none;
 }
 
 .journey-map__glow {
@@ -305,6 +424,50 @@
   background: rgba(88, 170, 255, 0.5);
 }
 
+/* ---- Particle FX layer (bursts, ripples, dust) ---- */
+
+.journey-map__fx {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.fx-particle {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.fx-particle--spark {
+  background: radial-gradient(circle, #eafff5, #8af0bf 55%, transparent 75%);
+  box-shadow: 0 0 6px 2px rgba(138, 240, 191, 0.7);
+}
+
+.fx-particle--dust {
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, rgba(200, 214, 230, 0.9), rgba(150, 170, 190, 0.4) 60%, transparent 80%);
+  filter: blur(0.3px);
+}
+
+.fx-ripple {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  margin-left: -23px;
+  margin-top: -23px;
+  border-radius: 50%;
+  border: 2px solid rgba(138, 240, 191, 0.8);
+  box-shadow: 0 0 16px rgba(88, 170, 255, 0.5);
+  pointer-events: none;
+}
+
+/* ---- Runner ---- */
+
 .runner {
   position: absolute;
   left: var(--x, 10%);
@@ -312,21 +475,74 @@
   transform: translate(-50%, -50%);
   width: 64px;
   height: 64px;
-  z-index: 3;
+  z-index: 6;
   transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.runner__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150px;
+  height: 150px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(88, 170, 255, 0.55), rgba(138, 240, 191, 0.22) 45%, transparent 72%);
+  mix-blend-mode: screen;
+  filter: blur(4px);
+  pointer-events: none;
+  animation: runner-glow-pulse 2.4s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes runner-glow-pulse {
+  0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.85; transform: translate(-50%, -50%) scale(1.12); }
+}
+
+.runner__body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 90%;
+  animation: runner-breathe 2.6s ease-in-out infinite;
+}
+
+@keyframes runner-breathe {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.015, 0.985); }
 }
 
 .runner img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 10px rgba(88, 170, 255, 0.45));
   animation: runner-bounce 1.2s ease-in-out infinite;
 }
 
 @keyframes runner-bounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
+}
+
+.runner__trail {
+  position: absolute;
+  top: 62%;
+  right: 100%;
+  width: 46px;
+  height: 8px;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, transparent, rgba(138, 240, 191, 0.55), rgba(88, 170, 255, 0.75));
+  border-radius: 999px;
+  opacity: 0;
+  filter: blur(1px);
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.runner.is-moving .runner__trail {
+  opacity: 0.85;
 }
 
 .runner__shadow {
@@ -347,11 +563,89 @@
   50% { transform: translateX(-50%) scale(0.8); opacity: 0.25; }
 }
 
+/* ---- Holographic milestone cards ---- */
+
 .stage-node {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --hover-lift: 0px;
+  --hover-scale: 1;
   position: absolute;
   left: var(--x, 0%);
   top: var(--y, 50%);
   transform: translate(-50%, -50%) scale(0.5);
+  z-index: 5;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.stage-node:focus-visible .stage-node__inner {
+  outline: 2px solid rgba(138, 240, 191, 0.8);
+  outline-offset: 2px;
+}
+
+.stage-node__glow-border {
+  position: absolute;
+  inset: -1px;
+  border-radius: 18px;
+  overflow: hidden;
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  padding: 1.5px;
+}
+
+.stage-node__glow-border::before {
+  content: '';
+  position: absolute;
+  inset: -60%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    rgba(138, 240, 191, 0.95) 12%,
+    transparent 30%,
+    transparent 55%,
+    rgba(88, 170, 255, 0.95) 72%,
+    transparent 92%
+  );
+  animation: border-spin 5s linear infinite;
+}
+
+@keyframes border-spin {
+  to { transform: rotate(360deg); }
+}
+
+.stage-node--visited .stage-node__glow-border {
+  opacity: 0.85;
+}
+
+.stage-node__ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 22px;
+  border: 1px solid rgba(138, 240, 191, 0.6);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stage-node--active .stage-node__ring {
+  animation: ring-pulse 1.6s ease-out infinite;
+}
+
+@keyframes ring-pulse {
+  0% { transform: scale(0.94); opacity: 0.8; }
+  100% { transform: scale(1.16); opacity: 0; }
+}
+
+.stage-node__inner {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -359,20 +653,57 @@
   max-width: 160px;
   padding: 0.75rem 0.85rem;
   border-radius: 16px;
-  background: rgba(10, 16, 30, 0.85);
-  border: 1px solid rgba(138, 240, 191, 0.3);
+  background: linear-gradient(160deg, rgba(20, 32, 52, 0.72), rgba(8, 14, 26, 0.78));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(138, 240, 191, 0.25);
   color: #eaf2ff;
-  cursor: pointer;
-  z-index: 2;
   text-align: center;
-  transition: border-color 0.2s ease, transform 0.3s ease, opacity 0.3s ease;
+  overflow: hidden;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  animation: card-idle-float 5s ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
 }
 
-.stage-node:hover {
-  border-color: rgba(138, 240, 191, 0.7);
+@keyframes card-idle-float {
+  0%, 100% {
+    transform: translateY(calc(var(--hover-lift, 0px) + 0px)) perspective(800px) rotateX(var(--tilt-y, 0deg)) rotateY(var(--tilt-x, 0deg)) scale(var(--hover-scale, 1));
+  }
+  50% {
+    transform: translateY(calc(var(--hover-lift, 0px) - 5px)) perspective(800px) rotateX(var(--tilt-y, 0deg)) rotateY(var(--tilt-x, 0deg)) scale(var(--hover-scale, 1));
+  }
+}
+
+.stage-node--visited .stage-node__inner {
+  border-color: rgba(138, 240, 191, 0.55);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35), 0 0 18px rgba(138, 240, 191, 0.2);
+}
+
+.stage-node--active .stage-node__inner {
+  border-color: rgba(88, 170, 255, 0.75);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), 0 0 26px rgba(88, 170, 255, 0.4);
+}
+
+.stage-node__sheen {
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  transform: skewX(-18deg);
+  animation: sheen-sweep 5.5s ease-in-out infinite;
+  animation-delay: var(--sheen-delay, 0s);
+  pointer-events: none;
+}
+
+@keyframes sheen-sweep {
+  0%, 20% { left: -60%; }
+  55%, 100% { left: 130%; }
 }
 
 .stage-node__level {
+  position: relative;
   width: 22px;
   height: 22px;
   border-radius: 50%;
@@ -383,6 +714,12 @@
   font-weight: 800;
   background: linear-gradient(135deg, #8af0bf, #58aaff);
   color: #041017;
+  animation: level-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes level-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(138, 240, 191, 0.5); }
+  50% { box-shadow: 0 0 0 5px rgba(138, 240, 191, 0); }
 }
 
 .stage-node__tag {
@@ -651,6 +988,23 @@
     background: linear-gradient(180deg, rgba(138, 240, 191, 0.6), rgba(88, 170, 255, 0.6));
   }
 
+  .journey-map__track-flow {
+    background: repeating-linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.85) 6%,
+      transparent 14%,
+      transparent 100%
+    );
+    background-size: 100% 220%;
+    animation: track-flow-vertical 3.2s linear infinite;
+  }
+
+  .energy-pulse {
+    left: 50%;
+    top: calc(var(--p) * 1%);
+  }
+
   .journey-map__glow {
     top: auto;
     left: 50%;
@@ -675,13 +1029,21 @@
   .runner {
     width: 48px;
     height: 48px;
-    z-index: 3;
   }
 
-  .stage-node {
+  .runner__trail {
+    top: 100%;
+    right: auto;
+    left: 50%;
+    width: 8px;
+    height: 36px;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, transparent, rgba(138, 240, 191, 0.55), rgba(88, 170, 255, 0.75));
+  }
+
+  .stage-node__inner {
     max-width: 140px;
     padding: 0.6rem 0.7rem;
-    z-index: 2;
   }
 
   .stage-node__title {
@@ -799,12 +1161,17 @@
     height: 40px;
   }
 
+  .runner__glow {
+    width: 110px;
+    height: 110px;
+  }
+
   .runner__shadow {
     width: 30px;
     height: 8px;
   }
 
-  .stage-node {
+  .stage-node__inner {
     max-width: 110px;
     padding: 0.5rem 0.5rem;
     border-radius: 12px;
@@ -873,52 +1240,7 @@
 }
 
 /* ==========================================================================
-   Animation: Stage node entrance
-   ========================================================================== */
-
-@keyframes node-appear {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.3);
-  }
-  60% {
-    transform: translate(-50%, -50%) scale(1.1);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-.stage-node--visible {
-  animation: node-appear 0.5s ease-out forwards;
-}
-
-/* ==========================================================================
-   Animation: Runner trail glow
-   ========================================================================== */
-
-.runner::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 80px;
-  height: 80px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(138, 240, 191, 0.3), transparent 70%);
-  pointer-events: none;
-  animation: trail-glow 1.5s ease-in-out infinite;
-}
-
-@keyframes trail-glow {
-  0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
-  50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.3); }
-}
-
-/* ==========================================================================
-   Animation: Track pulse
+   Animation: Track pulse + vertical flow variant
    ========================================================================== */
 
 @keyframes track-pulse {
@@ -926,54 +1248,34 @@
   50% { opacity: 1; }
 }
 
-
-/* ==========================================================================
-   Animation: Floating particles
-   ========================================================================== */
-
-.journey-map__sky::before,
-.journey-map__sky::after {
-  content: '';
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(138, 240, 191, 0.4);
-  animation: float-particle 4s ease-in-out infinite;
-}
-
-.journey-map__sky::before {
-  top: 20%;
-  left: 20%;
-  animation-delay: 0s;
-}
-
-.journey-map__sky::after {
-  top: 30%;
-  right: 25%;
-  width: 3px;
-  height: 3px;
-  background: rgba(88, 170, 255, 0.4);
-  animation-delay: 2s;
-}
-
-@keyframes float-particle {
-  0%, 100% { transform: translateY(0) scale(1); opacity: 0.4; }
-  50% { transform: translateY(-20px) scale(1.5); opacity: 0.8; }
+@keyframes track-flow-vertical {
+  0% { background-position: 0 0%; }
+  100% { background-position: 0 -220%; }
 }
 
 /* ==========================================================================
-   Responsive: Adjust animations for mobile
+   Accessibility: respect reduced-motion preference
    ========================================================================== */
 
-@media (max-width: 768px) {
-  .runner::after {
-    width: 60px;
-    height: 60px;
+@media (prefers-reduced-motion: reduce) {
+  .journey-map__fog,
+  .journey-map__rays,
+  .journey-map__track,
+  .journey-map__track-flow,
+  .energy-pulse,
+  .runner__glow,
+  .runner__body,
+  .runner img,
+  .runner__shadow,
+  .stage-node__glow-border::before,
+  .stage-node--active .stage-node__ring,
+  .stage-node__inner,
+  .stage-node__sheen,
+  .stage-node__level {
+    animation: none !important;
   }
 
-  .journey-map__sky::before,
-  .journey-map__sky::after {
-    display: none;
+  .runner {
+    transition: none;
   }
 }

@@ -147,6 +147,15 @@ const projects: Project[] = [
     liveUrl: 'https://mini-docs-bslg.vercel.app',
     sourceUrl: 'https://github.com/Shivanshrana1446/mini_docs',
   },
+  {
+    name: 'Drawing Notes Web',
+    summary: 'A web-based drawing and note-taking app for sketching ideas and jotting down notes in one place.',
+    description:
+      'An interactive drawing and note-taking application that lets users sketch, annotate, and organize notes directly in the browser. Built with a focus on a smooth, canvas-based drawing experience.',
+    technologies: ['React.js', 'JavaScript', 'Tailwind CSS'],
+    liveUrl: 'https://drawing-notes-web.vercel.app/',
+    sourceUrl: 'https://github.com/Shivanshrana1446/Drawing-notes-web',
+  },
 ];
 
 const educationNotes = [
