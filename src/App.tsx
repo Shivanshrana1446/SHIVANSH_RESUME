@@ -105,6 +105,31 @@ const experienceBullets = [
 
 const projects: Project[] = [
   {
+    name: 'Project & Task Management System (MERN)',
+    summary:
+      'Production-ready Project & Task Management platform built with MERN focusing on scalability, team workflows, and deployment.',
+    description:
+      'A full-featured project and task management system emphasizing production-quality, scalable architecture over simple CRUD. Features include secure JWT authentication with role-based access, project and team management, task management with priorities, statuses, comments, and attachments, interactive dashboard and analytics, search/filter/pagination, audit logs, RESTful APIs, responsive UI, and Dockerized development and deployment.',
+    technologies: [
+      'React',
+      'Vite',
+      'TypeScript',
+      'Redux Toolkit',
+      'TanStack Query',
+      'Tailwind CSS',
+      'Node.js',
+      'Express.js',
+      'MongoDB',
+      'Mongoose',
+      'JWT',
+      'Cloudinary',
+      'Docker',
+      'Docker Compose',
+    ],
+    liveUrl: 'https://task-manager-tool-olive.vercel.app/',
+    sourceUrl: 'https://github.com/Shivanshrana1446/Task_manager_tool',
+  },
+  {
     name: 'Modern Riawaz - Full Stack Business Website',
     summary: 'Designed, developed, automated, and deployed a complete business website tailored to client requirements.',
     description:
@@ -120,6 +145,33 @@ const projects: Project[] = [
       'A feature-rich clone of the Amazon website. This project includes user authentication (signup and login), a product catalog with search functionality, a shopping cart, and a checkout process. The backend is built with Node.js and Express.js, and it uses MongoDB for the database.',
     technologies: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Redux'],
     sourceUrl: 'https://github.com/Shivanshrana1446/Amazon-Clone',
+  },
+  {
+    name: 'Online Food Ordering & Restaurant Management System (MERN)',
+    summary:
+      'Full-stack MERN food ordering and restaurant management platform with multi-role dashboards, real-time ordering, and deployment-ready setup.',
+    description:
+      'Built with scalability, clean architecture, and real-world development practices. Key features include Customer, Restaurant Owner, Delivery Partner & Admin dashboards; secure JWT authentication and role-based access control; restaurant browsing, search and filters; cart management and online payment integration (test mode); real-time order management and tracking; ratings & reviews; responsive UI; RESTful APIs with input validation and exception handling; Docker & Docker Compose support; Swagger API documentation and Postman collection; unit testing with Jest; production-ready project structure.',
+    technologies: [
+      'React',
+      'TypeScript',
+      'Vite',
+      'Tailwind CSS',
+      'Redux Toolkit',
+      'Node.js',
+      'Express.js',
+      'MongoDB',
+      'Mongoose',
+      'JWT',
+      'Docker',
+      'Swagger',
+      'Jest',
+      'Cloudinary',
+      'Render',
+      'Vercel',
+    ],
+    liveUrl: 'https://feast-flow-food-app.vercel.app/',
+    sourceUrl: 'https://github.com/Shivanshrana1446/FeastFlow_food_app',
   },
   {
     name: 'Face Recognition Attendance Management System',
